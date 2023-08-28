@@ -8,7 +8,7 @@ PCDPublisher::PCDPublisher()
 {
     RCLCPP_INFO(this->get_logger(), "Start publish point cloud.");
 
-    folder_path = "/home/jeff/Foxconn/20230620_092330_+0800/vls128_0/";
+    folder_path = "/home/jeff/lidar_cluster_detection/pcd_publisher/data/";
     getFileList(folder_path, files);
     
     pcd_pub = create_publisher<sensor_msgs::msg::PointCloud2>("/vls128_0/velodyne_points", 10);
