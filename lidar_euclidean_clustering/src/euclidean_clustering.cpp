@@ -128,6 +128,7 @@ void EuclideanClustering::publishMarkerArray(const sensor_msgs::msg::PointCloud2
         marker.ns = "euclidean_clustering";
         marker.id = i;
         marker.type = visualization_msgs::msg::Marker::LINE_LIST;
+        marker.action = visualization_msgs::msg::Marker::ADD;
 
         geometry_msgs::msg::Point p[24];
         p[0].x = max[0];  p[0].y = max[1];  p[0].z = max[2];
@@ -164,7 +165,50 @@ void EuclideanClustering::publishMarkerArray(const sensor_msgs::msg::PointCloud2
         marker.color.g = 1.0;
         marker.color.b = 0.5;
         marker.lifetime = rclcpp::Duration(0.1);
+
+        visualization_msgs::msg::Marker distance_marker;
+        distance_marker.header = msg->header;
+        distance_marker.ns = "distance";
+        distance_marker.id = i;
+        distance_marker.type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;
+        distance_marker.action = visualization_msgs::msg::Marker::ADD;
+
+        geometry_msgs::msg::Point distance_marker_pose;
+        distance_marker_pose = marker.points.at(6);
+        distance_marker_pose.x = (marker.points.at(6).x + marker.points.at(7).x)/2;
+        distance_marker_pose.y -= 0.3;
+
+        distance_marker.pose.position = distance_marker_pose;
+        distance_marker.scale.z = 0.5;
+        distance_marker.color.a = 1.0;
+        distance_marker.color.r = 1.0;
+        distance_marker.color.g = 0.0;
+        distance_marker.color.b = 1.0;
+
+        float eu_distance;
+        if(marker.points.at(6).x > 0)
+            eu_distance = sqrt(
+                pow(marker.points.at(6).x, 2) + 
+                pow(marker.points.at(6).y, 2) + 
+                pow(marker.points.at(6).z, 2));
+        else if(marker.points.at(6).x < 0 && marker.points.at(7).x > 0)
+            eu_distance = sqrt(
+                pow((marker.points.at(6).x + marker.points.at(7).x)/2, 2) + 
+                pow(marker.points.at(6).y, 2) + 
+                pow(marker.points.at(6).z, 2));
+        else
+            eu_distance = sqrt(
+                pow(marker.points.at(7).x, 2) + 
+                pow(marker.points.at(7).y, 2) + 
+                pow(marker.points.at(7).z, 2));
+        
+        std::stringstream ss;
+        ss << std::fixed << std::setprecision(3) << eu_distance;
+        std::string text_distance = ss.str();
+        distance_marker.text = text_distance;
+
         marker_array_msg.markers.push_back(marker);
+        marker_array_msg.markers.push_back(distance_marker);
 
     }
     markerArray_pub->publish(marker_array_msg);
