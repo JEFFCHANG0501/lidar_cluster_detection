@@ -176,13 +176,13 @@ void EuclideanClustering::publishMarkerArray(const sensor_msgs::msg::PointCloud2
         geometry_msgs::msg::Point distance_marker_pose;
         distance_marker_pose = marker.points.at(6);
         distance_marker_pose.x = (marker.points.at(6).x + marker.points.at(7).x)/2;
-        distance_marker_pose.y -= 0.3;
+        distance_marker_pose.y -= 0.5;
 
         distance_marker.pose.position = distance_marker_pose;
-        distance_marker.scale.z = 0.5;
+        distance_marker.scale.z = 0.7;
         distance_marker.color.a = 1.0;
         distance_marker.color.r = 1.0;
-        distance_marker.color.g = 0.0;
+        distance_marker.color.g = 1.0;
         distance_marker.color.b = 1.0;
 
         float eu_distance;
